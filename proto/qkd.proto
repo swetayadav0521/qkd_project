@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package qkd;
+
+// gRPC service definition for the KeyManager (KMS)
+service KeyManager {
+    // Opens a connection between the client (APP) and the KMS
+    rpc OpenConnect(OpenConnectRequest) returns (OpenConnectResponse);
+    
+    // Retrieves a key from the KMS for a given KSID
+    rpc GetKey(GetKeyRequest) returns (GetKeyResponse);
+
+    // Closes the connection for a given KSID
+    rpc CloseConnection(CloseConnectionRequest) returns (CloseConnectionResponse);
+}
+
+// Message for opening a connection
+message OpenConnectRequest {
+    string source = 1;            // Source application identifier
+    string destination = 2;       // Destination application identifier
+    string key_stream_id = 3;     // KSID (if predefined)
+}
+
+message OpenConnectResponse {
+    string key_stream_id = 1;     // KSID assigned to the connection
+    string status = 2;            // Connection status (e.g., "SUCCESS" or "ERROR")
+}
+
+// Message for retrieving keys
+message GetKeyRequest {
+    string key_stream_id = 1;     // KSID for the connection
+    int32 index = 2;              // Index for key retrieval
+}
+
+message GetKeyResponse {
+    string key = 1;               // The retrieved key
+    string status = 2;            // Retrieval status (e.g., "SUCCESS" or "ERROR")
+}
+
+// Message for closing a connection
+message CloseConnectionRequest {
+    string key_stream_id = 1;     // KSID for the connection
+}
+
+message CloseConnectionResponse {
+    string status = 1;            // Closure status (e.g., "SUCCESS" or "ERROR")
+}
